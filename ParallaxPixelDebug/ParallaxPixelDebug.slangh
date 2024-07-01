@@ -1,0 +1,107 @@
+#ifndef PARALLAX_PIXEL_DEBUG_SLANGH
+#define PARALLAX_PIXEL_DEBUG_SLANGH
+
+import Utils.Debug.PixelDebug;
+
+struct ParallaxPixelDebug
+{
+    uint level;
+};
+
+ConstantBuffer<ParallaxPixelDebug> ParallaxPixelDebugCB;
+
+#ifdef _PIXEL_DEBUG_ENABLED
+
+
+void ParallaxPixelDebug_Init(uint2 pixelCoords,float2 u, float2 u2)
+{
+    printSetPixel(pixelCoords);
+    print("PARALLAX_PIXEL_DEBUG_GTH_BEGIN", float4(u, u2));
+
+    uint Width,Height,NumberOfLevels;
+    #if defined(PARALLAX_FUN) && PARALLAX_FUN == 10
+    uint Unused;
+    MaxMipTexture.GetDimensions(0,Width,Height,NumberOfLevels,Unused);
+    #else
+    gTexture.GetDimensions(0,Width,Height,NumberOfLevels);
+    #endif
+    print("PARALLAX_PIXEL_DEBUG_TEXTURE_DIMS", uint3(Width,Height,NumberOfLevels));
+    
+    float prev_t;
+    float prev_h;
+    float t = 0.0;
+    bool found = false;
+    
+    for (uint i = 0; i < 1024; i+=4)
+    {
+        float4 t_i = float4(
+            float(i  ) / 1023.0,
+            float(i+1) / 1023.0,
+            float(i+2) / 1023.0,
+            float(i+3) / 1023.0
+        );
+    
+        float4 val=float4(
+                getH(lerp(u,u2,t_i.x)),
+                getH(lerp(u,u2,t_i.y)),
+                getH(lerp(u,u2,t_i.z)),
+                getH(lerp(u,u2,t_i.w))
+                );
+        
+
+        #if defined(PARALLAX_FUN) && PARALLAX_FUN == 10
+            float4 sample;
+            for (int k=0;k<4;k++)
+            {
+                uint LevelShift = max(ParallaxPixelDebugCB.level,1)-1; 
+                float2 u_t = lerp(u,u2,t_i[k])*float2(Width>>LevelShift,Height>>LevelShift);
+                sample[k] = MaxMipTexture.Load(int4(u_t, ParallaxPixelDebugCB.level, 0)).r;
+            }
+
+            print("PARALLAX_PIXEL_DEBUG_TEXTURE_SAMPLE", sample);
+        #endif
+
+        if ( i == 0 )
+        {
+            prev_t = t_i.x;
+            prev_h = val.x;
+        }
+
+        for ( uint j = 0; j < 4; j++)
+        {
+            if ( !found && (1.0 - prev_t - prev_h) * (1.0 - t_i[j] - val[j]) <= 0.0 )
+            {
+                float post_t = t_i[j];
+                float post_h = val[j];
+
+                t = (prev_t + post_t)/2.0;
+                for ( uint k = 0;k<6;++k)
+                {
+                    float h = getH(lerp(u,u2,t));
+                    if ( h < 1.0 - t)
+                    {
+                        prev_t = t;
+                        prev_h = h;
+                    }
+                    else
+                    {
+                        post_t = t;
+                        post_h = h;
+                    }
+                    t = (prev_t + post_t)/2.0;
+                }
+                found = true;
+            }
+            prev_t = t_i[j];
+            prev_h = val[j];
+        }
+    
+        print("PARALLAX_PIXEL_DEBUG_GTH_HEIGHT", val);
+    }
+    print("PARALLAX_PIXEL_DEBUG_GTH_END",t);
+}
+#else
+void ParallaxPixelDebug_Init(uint2 pixelCoords, float2 u, float2 u2) {}
+#endif
+
+#endif

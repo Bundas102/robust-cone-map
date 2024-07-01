@@ -1,0 +1,4 @@
+The textures in the folders `Dirt_Cracked`, `Gravel_05`, and `Rock_Mossy` are originally from
+https://www.artstation.com/marketplace/p/BR0L/free-11-high-quality-material-textures-including-normal-maps-displacement-maps-and-smoothness-maps-2k-4k
+
+colorGridTest.png and displacePrimitives.png are from  https://doi.org/10.1111/cgf.13760 (Distortion-Free Displacement Mapping, Tobias Zirr, Tobias Ritschel)
