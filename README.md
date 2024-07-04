@@ -4,8 +4,20 @@
 
 ![Parallax mapping example](imgs/main.png)
 
-This project was created as a sample application in Falcor 7.0. The application contains the implementation for the Eurographics Symposium on Rendering 2024 paper *Robust Cone Step Mapping*, Róbert Bán, Gábor Valasek, Csaba Bálint, and Viktor A. Vad.
-
+This project (https://github.com/Bundas102/robust-cone-map) was created as a sample application in Falcor 7.0. The application contains the implementation for the Eurographics Symposium on Rendering 2024 paper: *Robust Cone Step Mapping*, Róbert Bán, Gábor Valasek, Csaba Bálint, and Viktor A. Vad, https://diglib.eg.org/handle/10.2312/sr20241146
+```
+@inproceedings{10.2312:sr.20241146,
+   booktitle = {Eurographics Symposium on Rendering},
+   editor =    {Haines, Eric and Garces, Elena},
+   title =     {{Robust Cone Step Mapping}},
+   author =    {Bán, Róbert and Valasek, Gábor and Bálint, Csaba and Vad, Viktor A.},
+   year =      {2024},
+   publisher = {The Eurographics Association},
+   ISSN =      {1727-3463},
+   ISBN =      {978-3-03868-262-2},
+   DOI =       {10.2312/sr.20241146}
+}
+```
 
 The project builds upon a [previous code base](https://github.com/Bundas102/falcor-conemap) for our Eurographics 2022 Short Paper: *Quick cone map generation on the GPU*, G&aacute;bor Valasek and R&oacute;bert B&aacute;n.
 
